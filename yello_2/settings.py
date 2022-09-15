@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'yello_2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'yello_user',
+        'NAME': 'yello_2_user',
         'USER': '',
         'PASSWORD': '',
         'HOST': 'localhost'
