@@ -1,5 +1,5 @@
 asgiref==3.5.2
-backports.zoneinfo==
+
 bcrypt==4.0.0
 cffi==1.15.1
 crispy-bootstrap5==0.6
