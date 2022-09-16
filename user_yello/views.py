@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render, redirect
 from .serializers import UserSerializer, PostSerializer
 from rest_framework import generics
@@ -6,8 +7,9 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import login, logout, authenticate 
 from django.contrib.auth.models import User, Group 
 from .models import Post
-
-
+from django.contrib.auth.hashers import make_password, check_password
+from django.http import JsonResponse
+import json
 
 # Create your views here.
 
@@ -26,6 +28,29 @@ class PostList(generics.ListCreateAPIView):
 class PostDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all().order_by('author')
     serializer_class = PostSerializer
+
+
+
+def check_login(request):
+        #IF A GET REQUEST IS MADE, RETURN AN EMPTY {}
+    if request.method=='GET':
+        return JsonResponse({Post.objects.all()})
+
+        #CHECK IF A PUT REQUEST IS BEING MADE
+    if request.method=='PUT':
+
+        jsonRequest = json.loads(request.body) #make the request JSON format
+        username = jsonRequest['username'] #get the username from the request
+        password = jsonRequest['password'] #get the password from the request
+        if User.objects.get(username=username): #see if username exists in db
+            user = User.objects.get(username=username)  #find user object with matching username
+            if check_password(password, user.password): #check if passwords match
+                return JsonResponse({Post.objects.all()}) #if passwords match, return a user dict
+            else: #passwords don't match so return empty dict
+                return JsonResponse({})
+        else: #if username doesn't exist in db, return empty dict
+            return JsonResponse({})
+
 
 
 @login_required(login_url="/login")
@@ -82,3 +107,29 @@ def sign_up(request):
             form = RegisterForm()
 
     return render (request, 'registration/sign_up.html', {"form": form})
+
+
+# def add_comment(request, pk):
+#     eachPost = Post.objects.get(id=pk)
+
+#     form = CommentForm(instance=eachPost)
+
+#     if request.method == 'POST':
+#         form = CommentForm(request.POST, instance=eachPost)
+#         if form.is_valid():
+#             name = request.user.username
+#             body = form.cleaned_data["comment_body"]
+#             c = Comment(product=eachPost, commenter_name=name, comment_body=body, created_at=datetime.now())
+#             c.save()
+#             return redirect('/home')
+#         else:
+#             print('form is invalid')
+#     else: 
+#         form = CommentForm()
+
+
+#     context = {'form': form}
+
+#     return render()
+
+# import Comment & CommentForm
