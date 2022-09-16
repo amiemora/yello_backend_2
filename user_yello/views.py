@@ -10,6 +10,7 @@ from .models import Post
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
 import json
+from . import views 
 
 # Create your views here.
 
@@ -32,9 +33,10 @@ class PostDetail(generics.RetrieveUpdateDestroyAPIView):
 
 
 def check_login(request):
+    posts = Post.objects.all()
         #IF A GET REQUEST IS MADE, RETURN AN EMPTY {}
     if request.method=='GET':
-        return JsonResponse({Post.objects.all()})
+        return JsonResponse( {"posts": posts})
 
         #CHECK IF A PUT REQUEST IS BEING MADE
     if request.method=='PUT':
@@ -45,7 +47,7 @@ def check_login(request):
         if User.objects.get(username=username): #see if username exists in db
             user = User.objects.get(username=username)  #find user object with matching username
             if check_password(password, user.password): #check if passwords match
-                return JsonResponse({Post.objects.all()}) #if passwords match, return a user dict
+                return JsonResponse({'id': user.id, 'email': user.email}) #if passwords match, return a user dict
             else: #passwords don't match so return empty dict
                 return JsonResponse({})
         else: #if username doesn't exist in db, return empty dict
