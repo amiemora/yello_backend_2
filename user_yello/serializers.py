@@ -1,5 +1,5 @@
 from rest_framework import serializers 
-from .models import Post
+from .models import Post, Comment
 from django.contrib.auth.models import User 
 from django.contrib.auth.hashers import make_password, check_password
 
@@ -31,6 +31,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
+        model = Comment
         fields = ('post','commenter_name','comment_body', 'likes')
 
 
